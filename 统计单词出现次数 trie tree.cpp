@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
+#include <memory>
 
 using namespace std;
 
@@ -10,18 +11,18 @@ struct tnode {
 	char name;
 	int count = 0;
 	int color = 0;
-	unordered_map<char, tnode*> child;
+	unordered_map<char, shared_ptr<tnode>> child;
 };
 
-void trieCreat(tnode* ohead, string &s) {
-	tnode* head = ohead;
+void trieCreat(shared_ptr<tnode> head, string &s) {
 	for (int i = 0; i < s.size(); i++) {
 		if (head->child.count(s[i]) != 0) {
 			head->count++;
 			head = head->child[s[i]];
 		}
 		else {
-			tnode *chd = new tnode;
+			shared_ptr<tnode> chd = make_shared<tnode>();
+			//tnode *chd = new tnode;
 			chd->name = s[i];
 			//chd->count = 1;
 			head->child[s[i]] = chd;
@@ -36,7 +37,7 @@ void trieCreat(tnode* ohead, string &s) {
 }
 
 
-int getTrieNum(tnode *head, string &s) {
+int getTrieNum(shared_ptr<tnode> head, string &s) {
 	for (int i = 0; i < s.size(); i++)
 	{
 		if (head->child.count(s[i])==0){
@@ -52,18 +53,18 @@ int getTrieNum(tnode *head, string &s) {
 int main(void) {
 	int n;
 	cin >> n;
-	tnode head;
+	shared_ptr<tnode> head = make_shared<tnode>();
 	for (int i = 0; i < n; i++) {
 		string s;
 		cin >> s;
-		trieCreat(&head, s);
+		trieCreat(head, s);
 	}
 	cin >> n;
 	for (int i = 0; i < n; i++)
 	{
 		string s;
 		cin >> s;
-		cout << getTrieNum(&head, s) << endl;
+		cout << getTrieNum(head, s) << endl;
 	}
 	return 0;
 }
